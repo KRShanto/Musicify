@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { auth, db } from "@/configs/firebase";
+import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import response from "@/lib/response";
@@ -25,10 +25,7 @@ export default async function handler(
       name,
       about: null,
       country: null,
-      url:
-        // use name as url
-        // replace all spaces with dashes and make it lowercase
-        name.toLowerCase().replace(/ /g, "-"),
+      url: name.toLowerCase().replace(/ /g, "-"),
       photo: null,
       followers: 0,
       createdAt: new Date(),

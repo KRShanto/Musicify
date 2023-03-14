@@ -31,6 +31,7 @@ export default function Input({
     <div className={`form-wrapper label-input ${className}`}>
       <label htmlFor={label}>{label}</label>
       <input
+        className="input"
         type={type}
         id={label}
         value={value}

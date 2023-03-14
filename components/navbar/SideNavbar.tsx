@@ -56,10 +56,10 @@ export default function SideNavbar() {
 
           <div className="links">
             {link.links.map((link) => (
-              <div className="link" key={link.name}>
+              <Link href={link.path} className="link" key={link.name}>
                 {link.icon}
-                <Link href={link.path}>{link.name}</Link>
-              </div>
+                {link.name}
+              </Link>
             ))}
           </div>
         </div>

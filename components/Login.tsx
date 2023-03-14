@@ -1,28 +1,30 @@
 import React, { useState } from "react";
 import Form, { SendType } from "./utils/form/Form";
 import Input from "./utils/form/Input";
-import { auth } from "@/configs/firebase";
+import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import Password from "./utils/form/Password";
+import { useRouter } from "next/router";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const router = useRouter();
+
   async function submitHandler(send: SendType) {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      await signInWithEmailAndPassword(auth, email, password);
+
+      router.push("/");
     } catch (error: any) {
       setError(error.message);
     }
   }
 
   return (
-    <Form submitHandler={submitHandler}>
+    <Form submitHandler={submitHandler} className="form-full">
       <h2 className="heading">Login</h2>
 
       {error && <p className="error">{error}</p>}
@@ -35,8 +37,7 @@ export default function Login() {
         required
       />
 
-      <Input
-        type="text" // TODO password
+      <Password
         label="Password"
         value={password}
         setValue={setPassword}

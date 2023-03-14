@@ -24,6 +24,7 @@ export default function Navbar() {
           Upgrade
         </Link>
 
+        {/* TODO login and create account will go under the profile section */}
         {loggedIn ? (
           <div className="profile">Profile</div>
         ) : (
@@ -32,7 +33,7 @@ export default function Navbar() {
               Login
             </Link>
 
-            <Link className="/create-account" href="create-account">
+            <Link className="link" href="create-account">
               Create Account
             </Link>
           </>

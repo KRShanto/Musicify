@@ -22,6 +22,7 @@ export default function Search() {
     <form className="link search">
       <div className="input-clear">
         <input
+          className="input"
           type="text"
           placeholder="Search"
           value={search}

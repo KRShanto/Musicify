@@ -5,7 +5,7 @@ import useLoadingStore from "@/stores/loading";
 import { FadeLoader } from "react-spinners";
 import usePopupStore from "@/stores/popup";
 import PopupState from "@/components/PopupState";
-import { auth } from "@/configs/firebase";
+import { auth } from "@/lib/firebase";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/auth";
 import Navbar from "@/components/navbar/Navbar";
