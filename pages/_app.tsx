@@ -1,6 +1,6 @@
 import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
-import SideNavbar from "@/components/SideNavbar";
+import SideNavbar from "@/components/navbar/SideNavbar";
 import useLoadingStore from "@/stores/loading";
 import { FadeLoader } from "react-spinners";
 import usePopupStore from "@/stores/popup";
@@ -8,7 +8,7 @@ import PopupState from "@/components/PopupState";
 import { auth } from "@/configs/firebase";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/auth";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { loading } = useLoadingStore((state) => state);
@@ -40,9 +40,13 @@ export default function App({ Component, pageProps }: AppProps) {
         {popup && <PopupState />}
         <main style={{ opacity: loading || popup ? 0.2 : 1 }}>
           <Navbar />
-          <SideNavbar />
 
-          <Component {...pageProps} />
+          <div className="body">
+            <SideNavbar />
+            {/* <div className="main-body" style={{}}> */}
+            <Component {...pageProps} />
+            {/* </div> */}
+          </div>
         </main>
       </>
     </>

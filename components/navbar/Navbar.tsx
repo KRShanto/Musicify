@@ -1,8 +1,6 @@
 import Link from "next/link";
-// plus icon
 import { FaPlus } from "react-icons/fa";
-// search icon
-import { AiOutlineSearch } from "react-icons/ai";
+import Search from "./Search";
 import { useAuthStore } from "@/stores/auth";
 
 export default function Navbar() {
@@ -11,17 +9,11 @@ export default function Navbar() {
   return (
     <nav>
       <div className="logo">
-        <h2>Musicify</h2>
+        <Link href="/">Musicify</Link>
       </div>
 
       <div className="links">
-        <div className="link search">
-          <input type="text" placeholder="Search" />
-          <button>
-            {" "}
-            <AiOutlineSearch />
-          </button>
-        </div>
+        <Search />
 
         <Link href="/create" className="link">
           Create <FaPlus />
