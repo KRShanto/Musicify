@@ -1,75 +1,51 @@
 import Link from "next/link";
-import React from "react";
-// Home icon from react-icons
-import { FaHome } from "react-icons/fa";
-// History icon from react-icons
-import { FaHistory } from "react-icons/fa";
-// Watch later icon from react-icons
-import { FaClock } from "react-icons/fa";
-// love icon
-import { FaHeart } from "react-icons/fa";
+// plus icon
+import { FaPlus } from "react-icons/fa";
+// search icon
+import { AiOutlineSearch } from "react-icons/ai";
+import { useAuthStore } from "@/stores/auth";
 
 export default function Navbar() {
-  const links = [
-    {
-      section: "",
-      links: [
-        {
-          name: "Home",
-          path: "/",
-          icon: <FaHome />,
-        },
-      ],
-    },
-    {
-      section: "Library",
-      links: [
-        {
-          name: "History",
-          path: "/history",
-          icon: <FaHistory />,
-        },
-        {
-          name: "Listen Later",
-          path: "/later",
-          icon: <FaClock />,
-        },
-        {
-          name: "Loved Songs",
-          path: "/loved-songs",
-          icon: <FaHeart />,
-        },
-        {
-          name: "Loved Playlists",
-          path: "/loved-playlists",
-          icon: <FaHeart />,
-        },
-      ],
-    },
-  ];
+  const { loggedIn } = useAuthStore((state) => state);
 
   return (
     <nav>
       <div className="logo">
-        <h1>Musicify</h1>
+        <h2>Musicify</h2>
       </div>
 
-      {links.map((link) => (
-        <div className="section" key={link.section}>
-          <div className="heading">
-            <p>{link.section}</p>
-          </div>
-
-          <div className="links">
-            {link.links.map((link) => (
-              <div className="link" key={link.name}>
-                {link.icon}
-                <Link href={link.path}>{link.name}</Link>
-              </div>
-            ))}
-          </div>
+      <div className="links">
+        <div className="link search">
+          <input type="text" placeholder="Search" />
+          <button>
+            {" "}
+            <AiOutlineSearch />
+          </button>
         </div>
-      ))}
+
+        <Link href="/create" className="link">
+          Create <FaPlus />
+        </Link>
+
+        {/* TODO: don't show it if user is already premium */}
+        <Link href="/upgrade" className="link upgrade">
+          Upgrade
+        </Link>
+
+        {loggedIn ? (
+          <div className="profile">Profile</div>
+        ) : (
+          <>
+            <Link href="/login" className="link">
+              Login
+            </Link>
+
+            <Link className="/create-account" href="create-account">
+              Create Account
+            </Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
