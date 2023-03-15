@@ -1,5 +1,6 @@
 export interface ChannelType {
   id: string;
+  userId: string;
   name: string;
   about: string | null;
   country: string | null;

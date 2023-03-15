@@ -1,2 +1,2 @@
 1. Analytics
-
+2. Firebase Security Rules - don't allow users to write or read private songs and playlists to other users

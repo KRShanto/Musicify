@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import Search from "./Search";
-import { useAuthStore } from "@/stores/auth";
+import useAuthStore from "@/stores/auth";
 
 export default function Navbar() {
   const { loggedIn } = useAuthStore((state) => state);

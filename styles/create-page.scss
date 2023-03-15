@@ -1,0 +1,26 @@
+#create-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: inherit;
+  gap: 5rem;
+
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 10px;
+    color: #ffffff9c;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 0 3px white;
+
+    &:hover {
+      background-color: #ffffff13;
+    }
+  }
+}

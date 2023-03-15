@@ -1,11 +1,13 @@
 import { create } from "zustand";
 
 interface AuthState {
-  loggedIn: boolean;
+  loggedIn: boolean | null;
   setLoggedIn: (loggedIn: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  loggedIn: false,
+const useAuthStore = create<AuthState>((set) => ({
+  loggedIn: null,
   setLoggedIn: (loggedIn) => set({ loggedIn }),
 }));
+
+export default useAuthStore;

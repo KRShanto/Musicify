@@ -12,5 +12,5 @@ export interface SongType {
   channelUrl: string;
   channelPhotoLink: string;
   playlistId: string;
-  public: boolean;
+  isPublic: boolean;
 }

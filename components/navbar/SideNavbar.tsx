@@ -1,15 +1,50 @@
 import Link from "next/link";
-import React from "react";
-// Home icon from react-icons
-import { FaHome } from "react-icons/fa";
-// History icon from react-icons
+import React, { useEffect, useState } from "react";
+import { FaHome, FaPlus } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
-// Watch later icon from react-icons
 import { FaClock } from "react-icons/fa";
-// love icon
 import { FaHeart } from "react-icons/fa";
+import {
+  doc,
+  getDoc,
+  where,
+  query,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import useAuthStore from "@/stores/auth";
+import { PlaylistType } from "@/types/data/playlist";
 
 export default function SideNavbar() {
+  const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
+  const { loggedIn } = useAuthStore();
+  // Get the current user from firebase
+  const user = loggedIn ? auth.currentUser : null;
+
+  // Get all playlists where userId === current user
+  // Read from "playlists" collection
+  async function fetchPlaylists() {
+    const q = query(
+      collection(db, "playlists"),
+      where("userId", "==", user?.uid)
+    );
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      // update
+      setPlaylists((prev: any) => [...prev, doc.data()]);
+    });
+  }
+
+  useEffect(() => {
+    if (loggedIn) {
+      fetchPlaylists();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const links = [
     {
       section: "",
@@ -64,6 +99,17 @@ export default function SideNavbar() {
           </div>
         </div>
       ))}
+
+      <div className="section">
+        <p className="heading">Your Playlists</p>
+
+        <div className="links">
+          <Link href="/create/playlist" className="link">
+            <FaPlus />
+            New Playlist
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

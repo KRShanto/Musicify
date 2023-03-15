@@ -7,31 +7,66 @@ import usePopupStore from "@/stores/popup";
 import PopupState from "@/components/PopupState";
 import { auth } from "@/lib/firebase";
 import { useEffect } from "react";
-import { useAuthStore } from "@/stores/auth";
+import useAuthStore from "@/stores/auth";
 import Navbar from "@/components/navbar/Navbar";
+import LoadingBar from "react-top-loading-bar";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { loading } = useLoadingStore((state) => state);
+  const [progress, setProgress] = useState(0);
+  const router = useRouter();
+
+  const { loading, turnOn, turnOff } = useLoadingStore((state) => state);
   const { popup } = usePopupStore((state) => state);
 
-  const { setLoggedIn } = useAuthStore((state) => state);
+  const { loggedIn, setLoggedIn } = useAuthStore((state) => state);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("User: ", user);
+        // console.log("User: ", user);
+        console.log("User is logged in: from onAuthStateChanged");
         setLoggedIn(true);
       } else {
-        setLoggedIn(false);
+        setTimeout(() => {
+          setLoggedIn(false);
+        }, 2000);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Progress bar
+  useEffect(() => {
+    const handleStart = (url: string) => {
+      setProgress(30);
+    };
+    const handleComplete = (url: string) => {
+      setProgress(100);
+    };
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  }, [router]);
 
   return (
     <>
+      <LoadingBar
+        color="rgb(0, 255, 208)"
+        height={3}
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
+
       {loading && (
-        <div id="preloader">
+        <div className="preloader gloabl-preloader">
           <FadeLoader className="spinner" color="cyan" loading={loading} />
         </div>
       )}
@@ -43,9 +78,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <div className="body">
             <SideNavbar />
-            {/* <div className="main-body" style={{}}> */}
-            <Component {...pageProps} />
-            {/* </div> */}
+            <div className="main-body">
+              <Component {...pageProps} />
+            </div>
           </div>
         </main>
       </>

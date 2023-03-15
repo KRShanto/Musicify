@@ -1,7 +1,7 @@
 import React from "react";
 import usePopupStore from "@/stores/popup";
-import CreatePlaylist from "./CreatePlaylist";
-import CreateMusic from "./CreateMusic";
+import CreatePlaylist from "./forms/CreatePlaylist";
+import CreateMusic from "./forms/CreateMusic";
 
 export default function PopupState() {
   const { popup } = usePopupStore((state) => state);

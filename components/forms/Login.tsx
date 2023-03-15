@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Form, { SendType } from "./utils/form/Form";
-import Input from "./utils/form/Input";
+import Form, { SendType } from "../utils/form/Form";
+import Input from "../utils/form/Input";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import Password from "./utils/form/Password";
+import Password from "../utils/form/Password";
 import { useRouter } from "next/router";
 
 export default function Login() {

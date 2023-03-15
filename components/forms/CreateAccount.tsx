@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import Form, { SendType } from "./utils/form/Form";
-import Input from "./utils/form/Input";
+import Form, { SendType } from "../utils/form/Form";
+import Input from "../utils/form/Input";
 import { auth, db } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import Password from "./utils/form/Password";
+import Password from "../utils/form/Password";
 import { useRouter } from "next/router";
+import useLoadingStore from "@/stores/loading";
 
 export default function CreateAccount() {
   const [name, setName] = useState("");
@@ -18,25 +19,44 @@ export default function CreateAccount() {
 
   const router = useRouter();
 
+  const { turnOn, turnOff } = useLoadingStore();
+
   async function submitHandler(send: SendType) {
-    const res = await send("/api/create-account", {
-      name,
-      email,
-      password,
-    });
+    const url = name.toLowerCase().replace(/ /g, "-");
+    turnOn();
 
-    if (res.type === "SUCCESS") {
-      // login
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
+    try {
+      // Create new account
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-        router.push("/");
-      } catch (error: any) {
-        setError(error.message);
+      // Create new channel
+      const newChannel = await setDoc(
+        doc(db, "channels", userCredential.user.uid),
+        {
+          id: userCredential.user.uid,
+          userId: userCredential.user.uid,
+          name,
+          about: null,
+          country: null,
+          url,
+          photo: null,
+          followers: 0,
+          createdAt: new Date(),
+        }
+      );
+
+      if (userCredential) {
+        turnOff();
+        router.push(`/channel/${url}`);
       }
-    } else {
-      console.log("Error: ", res.msg);
-      setError(res.msg || "Something went wrong");
+
+      // console.log("New channel: ", newChannel);
+    } catch (e: any) {
+      setError(e.message);
     }
   }
 
