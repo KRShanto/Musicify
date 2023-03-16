@@ -33,7 +33,9 @@ export default function SideNavbar() {
 
     querySnapshot.forEach((doc) => {
       // update
-      setPlaylists((prev: any) => [...prev, doc.data()]);
+      setPlaylists((prev: any) => [...prev, { id: doc.id, ...doc.data() }]);
+
+      console.log("Playlist: ", doc.id, " => ", doc.data());
     });
   }
 
@@ -41,9 +43,7 @@ export default function SideNavbar() {
     if (loggedIn) {
       fetchPlaylists();
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loggedIn]);
 
   const links = [
     {
@@ -90,8 +90,8 @@ export default function SideNavbar() {
           <p className="heading">{link.section}</p>
 
           <div className="links">
-            {link.links.map((link) => (
-              <Link href={link.path} className="link" key={link.name}>
+            {link.links.map((link, index) => (
+              <Link href={link.path} className="link" key={index}>
                 {link.icon}
                 {link.name}
               </Link>
@@ -108,6 +108,16 @@ export default function SideNavbar() {
             <FaPlus />
             New Playlist
           </Link>
+
+          {playlists.map((playlist) => (
+            <Link
+              href={`/playlist/${playlist.id}`}
+              className="link"
+              key={playlist.id}
+            >
+              {playlist.title}
+            </Link>
+          ))}
         </div>
       </div>
     </div>
