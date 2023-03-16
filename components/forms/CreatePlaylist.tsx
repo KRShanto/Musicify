@@ -6,7 +6,7 @@ import useAuthStore from "@/stores/auth";
 import useLoadingStore from "@/stores/loading";
 import NotLoggedInMessage from "../NotLoggedInMessage";
 import { FadeLoader } from "react-spinners";
-import { db, auth } from "@/lib/firebase";
+import { db, auth, storage } from "@/lib/firebase";
 import {
   doc,
   addDoc,
@@ -16,11 +16,15 @@ import {
   where,
   query,
 } from "firebase/firestore";
+import { ref, uploadBytes } from "firebase/storage";
 import shortid from "shortid";
 import { useRouter } from "next/router";
+import File from "../utils/form/File";
+import { DEFAULT_PLAYLIST_IMAGE_NAME, IMAGE_FOLDER } from "@/constants/storage";
 
 export default function CreatePlaylist() {
   const [title, setTitle] = useState("");
+  const [img, setImg] = useState<File | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,18 +50,6 @@ export default function CreatePlaylist() {
   }
 
   async function submitHandler(send: SendType) {
-    // if (!title) return setError("Title is required");
-    // const res = await send("/api/create-playlist", {
-    //   title,
-    //   isPublic,
-    // });
-    // if (res.type === "SUCCESS") {
-    //   // TODO: redirect
-    //   console.log("Success create playlist");
-    // } else {
-    //   console.log("Error: ", res.msg);
-    //   setError(res.msg || "Something went wrong");
-    // }
     turnOn();
 
     try {
@@ -69,26 +61,34 @@ export default function CreatePlaylist() {
       const channelDoc = await getDoc(channelRef);
       const channel = channelDoc.data();
 
-      console.log("Channel Data: ", channel);
+      // console.log("Channel Data: ", channel);
 
       // Create new playlist
-      const playlistRef = doc(db, "playlists", channel?.id);
+      // const playlistRef = doc(db, "playlists");
+      const playlistCollection = collection(db, "playlists");
+      const imgURL = img
+        ? `${shortid.generate()}-${img.name}`
+        : DEFAULT_PLAYLIST_IMAGE_NAME;
 
-      const url = shortid.generate();
-
-      await setDoc(playlistRef, {
+      const newPlaylist = await addDoc(playlistCollection, {
         title,
         loves: 0,
-        url,
+        img: imgURL,
         userId: user?.uid,
-        channelId: channel?.id,
+        channelId: user?.uid,
         channelName: channel?.name,
-        channelUrl: channel?.url,
-        channelPhoto: channel?.photo,
+        channelImg: channel?.img,
         isPublic: isPublic || false,
       });
 
-      router.push(`/playlist/${url}`);
+      if (img) {
+        const storageRef = ref(storage, `${IMAGE_FOLDER}/${imgURL}`);
+        await uploadBytes(storageRef, img);
+      }
+
+      router.push(`/playlist/${newPlaylist.id}`);
+
+      // console.log("Image: ", img[0]);
     } catch (error: any) {
       setError(error.message);
     }
@@ -112,6 +112,9 @@ export default function CreatePlaylist() {
             setChecked={setIsPublic}
           />
         </div>
+
+        {/* <Input label="Image URL" value={img} setValue={setImg} type="file" /> */}
+        <File label="Image URL" setValue={setImg} accept="image/*" />
 
         <button type="submit" className="btn green">
           Create

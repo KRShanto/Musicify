@@ -1,12 +1,13 @@
 export interface PlaylistType {
-  id: string;
+  // id: string;
   title: string;
   loves: string;
-  url: string;
+  // url: string;
+  img: string;
   userId: string;
   channelId: string;
   channelName: string;
-  channelUrl: string;
-  channelPhoto: string;
+  // channelUrl: string;
+  channelImg: string;
   isPublic: boolean;
 }
