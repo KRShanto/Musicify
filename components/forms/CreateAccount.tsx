@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import Form, { SendType } from "../utils/form/Form";
 import Input from "../utils/form/Input";
-import { auth, db } from "@/lib/firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { auth, db, storage } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import Password from "../utils/form/Password";
 import { useRouter } from "next/router";
 import useLoadingStore from "@/stores/loading";
+import { DEFAULT_CHANNEL_IMAGE_NAME, IMAGE_FOLDER } from "@/constants/storage";
+import shortid from "shortid";
+import { ref, uploadBytes } from "firebase/storage";
+import File from "../utils/form/File";
 
 export default function CreateAccount() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [img, setImg] = useState<File | null>(null);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -34,23 +36,31 @@ export default function CreateAccount() {
       );
 
       // Create new channel
-      const newChannel = await setDoc(
-        doc(db, "channels", userCredential.user.uid),
-        {
-          id: userCredential.user.uid,
-          userId: userCredential.user.uid,
-          name,
-          about: null,
-          country: null,
-          url,
-          photo: null,
-          followers: 0,
-          createdAt: new Date(),
-        }
-      );
+      const channelRef = doc(db, "channels", userCredential.user.uid);
+      const imgURL = img
+        ? `${shortid.generate()}-${img.name}`
+        : DEFAULT_CHANNEL_IMAGE_NAME;
+
+      await setDoc(channelRef, {
+        // id: userCredential.user.uid,
+        userId: userCredential.user.uid,
+        name,
+        about: null,
+        country: null,
+        img: imgURL,
+        followers: 0,
+        createdAt: new Date(),
+      });
 
       if (userCredential) {
         turnOff();
+
+        // Upload image
+        if (img) {
+          const storageRef = ref(storage, `${IMAGE_FOLDER}/${imgURL}`);
+          await uploadBytes(storageRef, img);
+        }
+
         router.push(`/channel/${url}`);
       }
 
@@ -67,6 +77,8 @@ export default function CreateAccount() {
       {error && <p className="error">{error}</p>}
 
       <Input label="Channel Name" value={name} setValue={setName} required />
+
+      <File label="Channel Image" setValue={setImg} accept="image/*" />
 
       <Input
         type="email"
