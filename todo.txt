@@ -1,2 +1,9 @@
 1. Analytics
+
 2. Firebase Security Rules - don't allow users to write or read private songs and playlists to other users
+
+3. When an account is created, automatically create a playlist for that user/channel with the same name as the channel. And when updating the channel img, ask user if it should also change the playlist img
+
+4. Predefiend images/avatar
+
+5. Show loading spinner where needed
