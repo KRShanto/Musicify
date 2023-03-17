@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function CreateMusic() {
+export default function CreateSong() {
   return <div>CreateMusic</div>;
 }

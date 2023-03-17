@@ -17,7 +17,8 @@ import useAuthStore from "@/stores/auth";
 import { PlaylistType } from "@/types/data/playlist";
 
 export default function SideNavbar() {
-  const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
+  const [playlists, setPlaylists] = useState<any>([]);
+
   const { loggedIn } = useAuthStore();
   // Get the current user from firebase
   const user = loggedIn ? auth.currentUser : null;
@@ -87,7 +88,7 @@ export default function SideNavbar() {
     <div id="side-navbar">
       {links.map((link) => (
         <div className="section" key={link.section}>
-          <p className="heading">{link.section}</p>
+          <p className="text-label">{link.section}</p>
 
           <div className="links">
             {link.links.map((link, index) => (
@@ -101,7 +102,7 @@ export default function SideNavbar() {
       ))}
 
       <div className="section">
-        <p className="heading">Your Playlists</p>
+        <p className="text-label">Your Playlists</p>
 
         <div className="links">
           <Link href="/create/playlist" className="link">
@@ -109,7 +110,7 @@ export default function SideNavbar() {
             New Playlist
           </Link>
 
-          {playlists.map((playlist) => (
+          {playlists.map((playlist: any) => (
             <Link
               href={`/playlist/${playlist.id}`}
               className="link"

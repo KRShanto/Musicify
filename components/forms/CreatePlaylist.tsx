@@ -72,6 +72,7 @@ export default function CreatePlaylist() {
 
       const newPlaylist = await addDoc(playlistCollection, {
         title,
+        about: "",
         loves: 0,
         img: imgURL,
         userId: user?.uid,

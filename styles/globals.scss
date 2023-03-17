@@ -35,7 +35,6 @@ body {
   position: relative;
   width: 85%;
   height: 92vh;
-  // border: 2px solid red;
 }
 
 .preloader {
@@ -49,24 +48,11 @@ body {
 }
 
 .gloabl-preloader {
-  // position: fixed;
   width: 100vw;
   height: 100vh;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
-  // z-index: 9999;
-}
-
-.spinner {
-  // border: 2px solid red;
-  // position: absolute;
-
-  // position: fixed;
 }
 
 .not-logged-in {
-  // border: 2px solid blue;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -85,12 +71,20 @@ body {
   }
 }
 
+.text-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff5f;
+  margin-bottom: 0.5rem;
+}
+
 @import "var.scss";
 
 @import "navbar.scss";
 @import "form.scss";
 @import "side-navbar.scss";
 @import "create-page.scss";
+@import "playlist-page.scss";
 
 @import "utility/input.scss";
 @import "utility/button.scss";

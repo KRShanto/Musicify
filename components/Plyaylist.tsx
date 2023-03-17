@@ -3,10 +3,17 @@ import { useRouter } from "next/router";
 import { PlaylistType } from "@/types/data/playlist";
 import { doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { auth, db, storage } from "@/lib/firebase";
 import Image from "next/image";
 import { IMAGE_FOLDER } from "@/constants/storage";
 import Link from "next/link";
+import { FadeLoader } from "react-spinners";
+
+// import icons
+import { BsFillPlayFill } from "react-icons/bs";
+import { BsHeart } from "react-icons/bs";
+import { BsHeartFill } from "react-icons/bs";
+import { BsPlus } from "react-icons/bs";
 
 export default function Plyaylist() {
   const [playlist, setPlaylist] = useState<PlaylistType | null>(null);
@@ -22,30 +29,56 @@ export default function Plyaylist() {
     const playlistDoc = await getDoc(playlistRef);
     const playlist = playlistDoc.data() as PlaylistType;
 
+    // update playlist
+    setPlaylist(playlist);
+  }
+
+  async function getPlaylistImage() {
     // Get the playlist image url
-    const imgRef = ref(storage, `${IMAGE_FOLDER}/${playlist.img}`);
+    const imgRef = ref(storage, `${IMAGE_FOLDER}/${playlist?.img}`);
     const imgURL = await getDownloadURL(imgRef);
 
+    // update images
+    setPlaylistImg(imgURL);
+  }
+
+  async function getChannelImage() {
     // Get the channel image url
     const channelImgRef = ref(
       storage,
-      `${IMAGE_FOLDER}/${playlist.channelImg}`
+      `${IMAGE_FOLDER}/${playlist?.channelImg}`
     );
     const channelImgURL = await getDownloadURL(channelImgRef);
 
-    // update
-    setPlaylist(playlist);
-    setPlaylistImg(imgURL);
+    // update images
     setChannelImg(channelImgURL);
   }
 
   useEffect(() => {
-    // fetch playlist
     if (id) getPlaylist();
   }, [id]);
 
+  useEffect(() => {
+    if (playlist) {
+      getPlaylistImage();
+      getChannelImage();
+    }
+  }, [playlist]);
+
+  if (!playlist) {
+    return (
+      <div className="preloader">
+        <FadeLoader
+          className="spinner"
+          color="cyan"
+          loading={playlist === null}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div id="playlist-page">
       <header className="header">
         {playlistImg ? (
           <Image
@@ -56,15 +89,16 @@ export default function Plyaylist() {
             className="playlist-img"
           />
         ) : (
-          <div className="img-alt"></div>
+          <div className="playlist-img-alt"></div>
         )}
 
         <div className="right-side">
-          <p className="playlist-text">Playlist</p>
+          <p className="text-label">Playlist</p>
 
-          <h1 className="playlist-title">{playlist?.title}</h1>
+          <h1 className="title">{playlist?.title}</h1>
+          <p className="about">{playlist?.about}</p>
 
-          <div className="playlist-channel">
+          <div className="channel">
             {channelImg ? (
               <Image
                 className="img"
@@ -74,7 +108,7 @@ export default function Plyaylist() {
                 height={50}
               />
             ) : (
-              <div className="img-alt"></div>
+              <div className="channel-img-alt"></div>
             )}
 
             <Link href={`/channel/${playlist?.channelId}`}>
@@ -83,6 +117,23 @@ export default function Plyaylist() {
           </div>
         </div>
       </header>
+
+      <div className="actions">
+        <button className="action play">
+          <BsFillPlayFill />
+        </button>
+
+        {playlist.userId === auth.currentUser?.uid && (
+          <Link href={`/create/song?plyalist=${id}`} className="action add">
+            <BsPlus className="action add" />
+          </Link>
+        )}
+
+        {/* TODO */}
+        <button className="action love">
+          <BsHeartFill />
+        </button>
+      </div>
     </div>
   );
 }

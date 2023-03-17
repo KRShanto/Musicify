@@ -1,6 +1,7 @@
 export interface PlaylistType {
   // id: string;
   title: string;
+  about: string;
   loves: string;
   // url: string;
   img: string;

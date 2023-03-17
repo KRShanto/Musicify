@@ -1,7 +1,7 @@
 import React from "react";
 import usePopupStore from "@/stores/popup";
 import CreatePlaylist from "./forms/CreatePlaylist";
-import CreateMusic from "./forms/CreateMusic";
+import CreateSong from "./forms/CreateSong";
 
 export default function PopupState() {
   const { popup } = usePopupStore((state) => state);
@@ -9,7 +9,7 @@ export default function PopupState() {
   return (
     <>
       {popup === "CreatePlaylist" && <CreatePlaylist />}
-      {popup === "CreateMusic" && <CreateMusic />}
+      {popup === "CreateMusic" && <CreateSong />}
     </>
   );
 }
