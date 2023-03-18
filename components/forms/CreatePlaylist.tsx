@@ -20,7 +20,9 @@ import { ref, uploadBytes } from "firebase/storage";
 import shortid from "shortid";
 import { useRouter } from "next/router";
 import File from "../utils/form/File";
+import usePlaylistStore from "@/stores/playlists";
 import { DEFAULT_PLAYLIST_IMAGE_NAME, IMAGE_FOLDER } from "@/constants/storage";
+import { PlaylistType } from "@/types/data/playlist";
 
 export default function CreatePlaylist() {
   const [title, setTitle] = useState("");
@@ -30,30 +32,14 @@ export default function CreatePlaylist() {
 
   const { loggedIn } = useAuthStore();
   const { turnOn, turnOff } = useLoadingStore();
+  const { addPlaylist } = usePlaylistStore();
 
   const router = useRouter();
-
-  if (loggedIn === false) {
-    return <NotLoggedInMessage task="create Playlist" />;
-  }
-
-  if (loggedIn === null) {
-    return (
-      <div className="preloader">
-        <FadeLoader
-          className="spinner"
-          color="cyan"
-          loading={loggedIn === null}
-        />
-      </div>
-    );
-  }
 
   async function submitHandler(send: SendType) {
     turnOn();
 
     try {
-      // Check if the user is authenticated
       const user = auth.currentUser;
 
       // Get the channel using the user id
@@ -70,7 +56,7 @@ export default function CreatePlaylist() {
         ? `${shortid.generate()}-${img.name}`
         : DEFAULT_PLAYLIST_IMAGE_NAME;
 
-      const newPlaylist = await addDoc(playlistCollection, {
+      const playlist = {
         title,
         about: "",
         loves: 0,
@@ -80,12 +66,21 @@ export default function CreatePlaylist() {
         channelName: channel?.name,
         channelImg: channel?.img,
         isPublic: isPublic || false,
-      });
+      };
+
+      const newPlaylist = await addDoc(playlistCollection, playlist);
 
       if (img) {
         const storageRef = ref(storage, `${IMAGE_FOLDER}/${imgURL}`);
         await uploadBytes(storageRef, img);
       }
+
+      // Update the state
+      // @ts-ignore
+      addPlaylist({
+        id: newPlaylist.id,
+        ...playlist,
+      });
 
       router.push(`/playlist/${newPlaylist.id}`);
 
@@ -95,6 +90,22 @@ export default function CreatePlaylist() {
     }
 
     turnOff();
+  }
+
+  if (loggedIn === false) {
+    return <NotLoggedInMessage task="create Playlist" />;
+  }
+
+  if (loggedIn === null) {
+    return (
+      <div className="preloader">
+        <FadeLoader
+          className="spinner"
+          color="cyan"
+          loading={loggedIn === null}
+        />
+      </div>
+    );
   }
 
   if (loggedIn)
@@ -115,7 +126,7 @@ export default function CreatePlaylist() {
         </div>
 
         {/* <Input label="Image URL" value={img} setValue={setImg} type="file" /> */}
-        <File label="Image URL" setValue={setImg} accept="image/*" />
+        <File label="Image" setValue={setImg} accept="image/*" />
 
         <button type="submit" className="btn green">
           Create

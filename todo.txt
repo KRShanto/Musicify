@@ -7,3 +7,9 @@
 4. Predefiend images/avatar
 
 5. Show loading spinner where needed
+
+6. Style the <File> component
+
+7. Meta tags
+
+8. Algolia search
