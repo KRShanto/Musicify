@@ -8,10 +8,21 @@ import PopupState from "@/components/PopupState";
 import { auth } from "@/lib/firebase";
 import { useEffect } from "react";
 import useAuthStore from "@/stores/auth";
+import usePlaylistStore from "@/stores/playlists";
 import Navbar from "@/components/navbar/Navbar";
 import LoadingBar from "react-top-loading-bar";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import {
+  doc,
+  getDoc,
+  where,
+  query,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { PlaylistType } from "@/types/data/playlist";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [progress, setProgress] = useState(0);
@@ -19,14 +30,42 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const { loading, turnOn, turnOff } = useLoadingStore((state) => state);
   const { popup } = usePopupStore((state) => state);
-
   const { loggedIn, setLoggedIn } = useAuthStore((state) => state);
+  const { setPlaylists } = usePlaylistStore((state) => state);
+
+  const user = loggedIn ? auth.currentUser : null;
+
+  // Get all playlists where userId === current user
+  // Read from "playlists" collection
+  async function fetchPlaylists() {
+    const q = query(
+      collection(db, "playlists"),
+      where("userId", "==", user?.uid)
+    );
+    const querySnapshot = await getDocs(q);
+
+    let playlists: PlaylistType[] = [];
+
+    querySnapshot.forEach((doc) =>
+      playlists.push({
+        id: doc.id,
+        ...doc.data(),
+      } as PlaylistType)
+    );
+
+    // update
+    setPlaylists(playlists);
+  }
+
+  useEffect(() => {
+    if (loggedIn) {
+      fetchPlaylists();
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // console.log("User: ", user);
-        console.log("User is logged in: from onAuthStateChanged");
         setLoggedIn(true);
       } else {
         setTimeout(() => {

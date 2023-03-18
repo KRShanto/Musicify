@@ -4,47 +4,10 @@ import { FaHome, FaPlus } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
-import {
-  doc,
-  getDoc,
-  where,
-  query,
-  collection,
-  getDocs,
-} from "firebase/firestore";
-import { db, auth } from "@/lib/firebase";
-import useAuthStore from "@/stores/auth";
-import { PlaylistType } from "@/types/data/playlist";
+import usePlaylistStore from "@/stores/playlists";
 
 export default function SideNavbar() {
-  const [playlists, setPlaylists] = useState<any>([]);
-
-  const { loggedIn } = useAuthStore();
-  // Get the current user from firebase
-  const user = loggedIn ? auth.currentUser : null;
-
-  // Get all playlists where userId === current user
-  // Read from "playlists" collection
-  async function fetchPlaylists() {
-    const q = query(
-      collection(db, "playlists"),
-      where("userId", "==", user?.uid)
-    );
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      // update
-      setPlaylists((prev: any) => [...prev, { id: doc.id, ...doc.data() }]);
-
-      console.log("Playlist: ", doc.id, " => ", doc.data());
-    });
-  }
-
-  useEffect(() => {
-    if (loggedIn) {
-      fetchPlaylists();
-    }
-  }, [loggedIn]);
+  const { playlists } = usePlaylistStore((state) => state);
 
   const links = [
     {
