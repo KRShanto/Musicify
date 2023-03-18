@@ -14,6 +14,7 @@ import { BsFillPlayFill } from "react-icons/bs";
 import { BsHeart } from "react-icons/bs";
 import { BsHeartFill } from "react-icons/bs";
 import { BsPlus } from "react-icons/bs";
+import { BsFillShareFill } from "react-icons/bs";
 
 export default function Plyaylist() {
   const [playlist, setPlaylist] = useState<PlaylistType | null>(null);
@@ -124,7 +125,7 @@ export default function Plyaylist() {
         </button>
 
         {playlist.userId === auth.currentUser?.uid && (
-          <Link href={`/create/song?plyalist=${id}`} className="action add">
+          <Link href={`/create/song?playlist=${id}`} className="action add">
             <BsPlus className="action add" />
           </Link>
         )}
@@ -132,6 +133,10 @@ export default function Plyaylist() {
         {/* TODO */}
         <button className="action love">
           <BsHeartFill />
+        </button>
+
+        <button className="action share">
+          <BsFillShareFill />
         </button>
       </div>
     </div>
