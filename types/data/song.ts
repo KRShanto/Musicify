@@ -5,8 +5,8 @@ export interface SongType {
   // url: string;
   // audioLink: string;
   // photoLink: string;
-  img: string;
-  audio: string;
+  imgURL: string;
+  audioURL: string;
   artist: string;
   loves: number;
   channelId: string;
@@ -16,4 +16,5 @@ export interface SongType {
   channelImg: string;
   playlistId: string;
   isPublic: boolean;
+  createdAt: string;
 }
