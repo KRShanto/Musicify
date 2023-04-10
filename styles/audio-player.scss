@@ -1,0 +1,18 @@
+$rhap_theme-color: $mainColor;
+$rhap_background-color: rgba(12, 12, 12, 0.798);
+// $rhap_bar-color: $mainColor;
+$rhap_time-color: white;
+$rhap_font-family: "Josefin Sans", sans-serif;
+
+@import "react-h5-audio-player/src/styles.scss";
+
+.audio-player {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+
+  .rhap_container {
+    box-shadow: 0 0 1px white;
+  }
+}

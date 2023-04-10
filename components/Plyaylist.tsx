@@ -1,28 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef } from "react";
 import { useRouter } from "next/router";
 import { PlaylistType } from "@/types/data/playlist";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { auth, db, storage } from "@/lib/firebase";
 import Image from "next/image";
-import { IMAGE_FOLDER } from "@/constants/storage";
+import { AUDIO_FOLDER, IMAGE_FOLDER } from "@/constants/storage";
 import Link from "next/link";
 import { FadeLoader } from "react-spinners";
+import moment from "moment";
+import AudioPlayer from "react-h5-audio-player";
 
-// import icons
 import { BsFillPlayFill } from "react-icons/bs";
 import { BsHeart } from "react-icons/bs";
 import { BsHeartFill } from "react-icons/bs";
 import { BsPlus } from "react-icons/bs";
 import { BsFillShareFill } from "react-icons/bs";
+import { SongType } from "@/types/data/song";
 
+// TODO: check if the playlist is private or public or doesn't exist
+// TODO: check if the song is private or public or doesn't exist
 export default function Plyaylist() {
   const [playlist, setPlaylist] = useState<PlaylistType | null>(null);
+  const [songs, setSongs] = useState<SongType[]>([]);
   const [playlistImg, setPlaylistImg] = useState<string | null>(null);
   const [channelImg, setChannelImg] = useState<string | null>(null);
+  const [songAudios, setSongAudios] = useState<HTMLAudioElement[]>([]);
+  const [songImages, setSongImages] = useState<string[]>([]);
 
   const router = useRouter();
   const { id } = router.query;
+  const player = createRef<any>();
 
   async function getPlaylist() {
     // Get the playlist
@@ -30,8 +45,8 @@ export default function Plyaylist() {
     const playlistDoc = await getDoc(playlistRef);
     const playlist = playlistDoc.data() as PlaylistType;
 
-    // update playlist
-    setPlaylist(playlist);
+    // update playlist state with the id
+    setPlaylist({ ...playlist, id: playlistDoc.id });
   }
 
   async function getPlaylistImage() {
@@ -55,6 +70,60 @@ export default function Plyaylist() {
     setChannelImg(channelImgURL);
   }
 
+  async function getPlaylistSongs() {
+    // Get the songs where the playlistId is equal to the playlist id
+    const songsRef = query(
+      collection(db, "songs"),
+      where("playlistId", "==", playlist?.id)
+    );
+    const songsSnapshot = await getDocs(songsRef);
+    const songs = songsSnapshot.docs.map((doc) => doc.data()) as SongType[];
+
+    // update songs state
+    setSongs(songs);
+
+    // Get the songs audio
+    // Get songs from firebase storage
+    const songAudios = await Promise.all(
+      songs.map(async (song) => {
+        const songRef = ref(storage, `${AUDIO_FOLDER}/${song.audioURL}`);
+        const songURL = await getDownloadURL(songRef);
+
+        const songAudio = new Audio(songURL);
+
+        return songAudio;
+      })
+    );
+
+    setSongAudios(songAudios);
+
+    // Get the songs image
+    const songImages = await Promise.all(
+      songs.map(async (song) => {
+        const songImgRef = ref(storage, `${IMAGE_FOLDER}/${song.imgURL}`);
+        const songImgURL = await getDownloadURL(songImgRef);
+
+        return songImgURL;
+      })
+    );
+
+    setSongImages(songImages);
+  }
+
+  function handle(index: number) {
+    if (player.current.audio.current) {
+      if (player.current.audio.current.src !== songAudios[index].src) {
+        player.current.audio.current.src = songAudios[index].src;
+      }
+
+      if (player.current.audio.current.paused) {
+        player.current.audio.current.play();
+      } else {
+        player.current.audio.current.pause();
+      }
+    }
+  }
+
   useEffect(() => {
     if (id) getPlaylist();
   }, [id]);
@@ -63,6 +132,7 @@ export default function Plyaylist() {
     if (playlist) {
       getPlaylistImage();
       getChannelImage();
+      getPlaylistSongs();
     }
   }, [playlist]);
 
@@ -138,6 +208,64 @@ export default function Plyaylist() {
         <button className="action share">
           <BsFillShareFill />
         </button>
+      </div>
+
+      <div className="songs">
+        {songs.map((song, index) => (
+          <div className="song" key={index}>
+            <div className="title-artist">
+              {songImages[index] ? (
+                <Image
+                  src={songImages[index]}
+                  alt="Song Image"
+                  width={50}
+                  height={50}
+                  className="song-img"
+                />
+              ) : (
+                <div className="song-img-alt"></div>
+              )}
+              <p className="title">{song.title}</p>
+              <p className="artist">{song.artist}</p>
+            </div>
+
+            <p className="date">
+              {/* @ts-ignore */}
+              {moment(song.createdAt.toDate()).format("MMM DD, YYYY")}
+            </p>
+
+            <div className="actions" onClick={() => handle(index)}>
+              <button className="action play">
+                <BsFillPlayFill />
+              </button>
+
+              <button className="action share">
+                <BsFillShareFill />
+              </button>
+
+              <button className="action love">
+                <BsHeart />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="audio-player">
+        {songAudios.length > 0 && (
+          <AudioPlayer
+            src={songAudios[0]?.src}
+            ref={player}
+            autoPlay={false}
+            onClickNext={() => {
+              console.log("Next");
+            }}
+            onClickPrevious={() => {
+              console.log("Previous");
+            }}
+            showSkipControls={true}
+          />
+        )}
       </div>
     </div>
   );
