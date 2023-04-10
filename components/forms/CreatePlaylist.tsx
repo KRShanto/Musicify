@@ -126,7 +126,7 @@ export default function CreatePlaylist() {
         </div>
 
         {/* <Input label="Image URL" value={img} setValue={setImg} type="file" /> */}
-        <File label="Image" setValue={setImg} accept="image/*" />
+        <File label="Image" setValue={setImg} />
 
         <button type="submit" className="btn green">
           Create

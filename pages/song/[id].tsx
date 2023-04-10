@@ -1,5 +1,6 @@
 import React from "react";
+import Song from "@/components/Song";
 
 export default function SongPage() {
-  return <h1>Song Page</h1>;
+  return <Song />
 }

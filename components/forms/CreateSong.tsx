@@ -28,6 +28,7 @@ import Input from "../utils/form/Input";
 import File from "../utils/form/File";
 import Checkbox from "../utils/form/Checkbox";
 import Select from "../utils/form/Select";
+import Progress from "../utils/form/Progress";
 
 export default function CreateSong() {
   const { loggedIn } = useAuthStore();
@@ -150,6 +151,7 @@ function CreateSongForm() {
         channelName: channel?.name,
         channelImg: channel?.img,
         playlistId,
+
         createdAt: new Date(),
       };
 
@@ -219,9 +221,9 @@ function CreateSongForm() {
 
       <Input label="Artist" value={artist} setValue={setArtist} />
 
-      <File label="Image" setValue={setImg} accept="image/*" />
+      <File label="Image" setValue={setImg} />
 
-      <File label="Audio" setValue={setAudio} accept="audio/*" />
+      <File label="Audio" setValue={setAudio} />
 
       <div className="form-wrapper">
         <Checkbox label="Public" checked={isPublic} setChecked={setIsPublic} />
@@ -234,20 +236,7 @@ function CreateSongForm() {
         setValue={setSelectedPlaylist}
       />
 
-      {progress > 0 && (
-        <div className="progress">
-          <div
-            className="progress-bar"
-            role="progressbar"
-            style={{ width: `${progress}%` }}
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            {progress}%
-          </div>
-        </div>
-      )}
+      <Progress progress={progress} />
 
       <button className="btn green" type="submit">
         Create

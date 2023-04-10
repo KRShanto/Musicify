@@ -78,7 +78,7 @@ export default function CreateAccount() {
 
       <Input label="Channel Name" value={name} setValue={setName} required />
 
-      <File label="Channel Image" setValue={setImg} accept="image/*" />
+      <File label="Channel Image" setValue={setImg} />
 
       <Input
         type="email"

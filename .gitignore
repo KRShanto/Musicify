@@ -39,3 +39,6 @@ next-env.d.ts
 serviceAccountKey.json
 
 next.txt
+
+# test songs
+test-songs
