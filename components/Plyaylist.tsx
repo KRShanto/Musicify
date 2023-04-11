@@ -210,45 +210,68 @@ export default function Plyaylist() {
         </button>
       </div>
 
-      <div className="songs">
-        {songs.map((song, index) => (
-          <div className="song" key={index}>
-            <div className="title-artist">
-              {songImages[index] ? (
-                <Image
-                  src={songImages[index]}
-                  alt="Song Image"
-                  width={50}
-                  height={50}
-                  className="song-img"
-                />
-              ) : (
-                <div className="song-img-alt"></div>
-              )}
-              <p className="title">{song.title}</p>
-              <p className="artist">{song.artist}</p>
-            </div>
+      <div className="songs-container">
+        <table className="songs">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-            <p className="date">
-              {/* @ts-ignore */}
-              {moment(song.createdAt.toDate()).format("MMM DD, YYYY")}
-            </p>
+          <tbody>
+            {songs.map((song, index) => (
+              <tr key={index} className="song">
+                <td className="index">{index + 1}</td>
 
-            <div className="actions" onClick={() => handle(index)}>
-              <button className="action play">
-                <BsFillPlayFill />
-              </button>
+                <td className="title">
+                  {/* Image and title together */}
+                  {songImages[index] ? (
+                    <Image
+                      src={songImages[index]}
+                      alt="Song Image"
+                      width={50}
+                      height={50}
+                      className="song-img"
+                    />
+                  ) : (
+                    <div className="song-img-alt"></div>
+                  )}
+                  <p className="text">{song.title}</p>
+                </td>
 
-              <button className="action share">
-                <BsFillShareFill />
-              </button>
+                <td className="artist">{song.artist}</td>
 
-              <button className="action love">
-                <BsHeart />
-              </button>
-            </div>
-          </div>
-        ))}
+                <td className="date">
+                  {/* @ts-ignore */}
+                  {moment(song.createdAt.toDate()).format("MMM DD, YYYY")}
+                </td>
+
+                <td className="actions-table">
+                  <div className="actions">
+                    <button
+                      className="action play"
+                      onClick={() => handle(index)}
+                    >
+                      <BsFillPlayFill />
+                    </button>
+
+                    <button className="action share">
+                      <BsFillShareFill />
+                    </button>
+
+                    <button className="action love">
+                      <BsHeart />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="audio-player">

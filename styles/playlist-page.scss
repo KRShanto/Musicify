@@ -104,13 +104,70 @@
     }
   }
 
-  .songs {
-    .song {
-      .song-img-alt {
-        background-color: rgba(255, 255, 255, 0.607);
-        width: 50px;
-        height: 50px;
-        animation: pulse 2s infinite;
+  .songs-container {
+    padding-bottom: 5rem;
+    .songs {
+      // create space at the bottom
+      margin: 4rem auto;
+      border-collapse: collapse;
+      width: 95%;
+
+      th,
+      td {
+        padding: 1rem 3rem;
+        // border: 2px solid #1db954;
+        // border-collapse: collapse;
+        text-align: left;
+      }
+
+      th {
+        color: rgba(255, 255, 255, 0.428);
+        font-size: 1.3rem;
+        font-family: "Josefin Sans", sans-serif;
+        // bottom border
+        border-bottom: 1px solid rgba(255, 255, 255, 0.428);
+      }
+
+      .song {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.783);
+        font-family: "Josefin Sans", sans-serif;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .title {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1rem;
+
+          .text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+          }
+        }
+
+        .song-img-alt {
+          background-color: rgba(255, 255, 255, 0.607);
+          width: 50px;
+          height: 50px;
+          animation: pulse 2s infinite;
+        }
+
+        .actions {
+          margin: 0;
+          padding: 0;
+          gap: 0.5rem;
+
+          .action {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+          }
+        }
       }
     }
   }

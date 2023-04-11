@@ -32,9 +32,10 @@ body {
 }
 
 .main-body {
-  position: relative;
+  position: absolute;
   width: 85%;
   height: 92vh;
+  right: 0;
 }
 
 .preloader {
