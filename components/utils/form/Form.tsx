@@ -6,10 +6,14 @@ export type SendType = (path: string, body: any) => Promise<ReturnedJsonType>;
 
 export default function Form({
   className,
+  title,
+  error,
   submitHandler,
   children,
 }: {
   className?: string;
+  title?: string;
+  error?: string;
   submitHandler: (send: SendType) => void;
   children: React.ReactNode;
 }) {
@@ -39,6 +43,10 @@ export default function Form({
 
   return (
     <form action="#" onSubmit={handleSubmit} className={`form ${className}`}>
+      {title && <h2 className="heading">{title}</h2>}
+
+      {error && <p className="error">{error}</p>}
+
       {children}
     </form>
   );

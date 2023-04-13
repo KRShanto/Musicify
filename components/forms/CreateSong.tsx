@@ -8,20 +8,11 @@ import {
   IMAGE_FOLDER,
   AUDIO_FOLDER,
 } from "@/constants/storage";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { auth, db, storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, uploadBytes } from "firebase/storage";
 import { FadeLoader } from "react-spinners";
 import { useRouter } from "next/router";
-import { PlaylistType } from "@/types/data/playlist";
 import shortid from "shortid";
 import Form from "../utils/form/Form";
 import Input from "../utils/form/Input";
@@ -78,8 +69,6 @@ function CreateSongForm() {
   const router = useRouter();
   const query = router.query.playlist;
 
-  console.log("Query: ", router.query);
-
   useEffect(() => {
     // if any query "playlist" is present, then filter the playlists
     if (query) {
@@ -87,7 +76,6 @@ function CreateSongForm() {
         // match with playlist id
         playlist.id.includes(query as string)
       );
-      console.log("Filtered Playlists: ", filteredPlaylists);
       setDisplayedPlaylists(
         filteredPlaylists.map((playlist) => playlist.title)
       );
@@ -114,18 +102,12 @@ function CreateSongForm() {
       const channelDoc = await getDoc(channelRef);
       const channel = channelDoc.data();
 
-      // console.log("Channel Data: ", channel);
-
       // Playlist id
       const playlist = playlists.find(
         (playlist) => playlist.title === selectedPlaylist
       );
 
       const playlistId = playlist?.id;
-
-      console.log("Playlists: ", playlists);
-      console.log("Playlist: ", playlist);
-      console.log("Selected Playlist: ", selectedPlaylist);
 
       // Create new song
       const songCollection = collection(db, "songs");
@@ -146,16 +128,12 @@ function CreateSongForm() {
         audioURL,
         isPublic,
         userId: user?.uid,
-        // channel,
         channelId: user?.uid,
         channelName: channel?.name,
         channelImg: channel?.img,
         playlistId,
-
         createdAt: new Date(),
       };
-
-      console.log("Song: ", song);
 
       // Add the song to the database
       const newSong = await addDoc(songCollection, song);
@@ -172,7 +150,6 @@ function CreateSongForm() {
       // TODO: update the progress store
       // Upload the audio to the storage
       // Show the progress
-      // if (audio) {
       const audioRef = ref(storage, `${AUDIO_FOLDER}/${audioURL}`);
       const uploadTask = uploadBytesResumable(audioRef, audio);
       uploadTask.on(
@@ -188,11 +165,6 @@ function CreateSongForm() {
         },
         () => {
           // Upload completed
-          // uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          // console.log("File available at", downloadURL);
-          // });
-          console.log("Upload completed");
-
           // If the url has a query "playlist", then redirect to the playlist page
           // else redirect to the song page
           if (query) {
@@ -212,11 +184,12 @@ function CreateSongForm() {
   }
 
   return (
-    <Form submitHandler={submitHandler} className="form-full">
-      <h2 className="heading">Create Song</h2>
-
-      {error && <p className="error">{error}</p>}
-
+    <Form
+      submitHandler={submitHandler}
+      className="form-full"
+      title="Create Song"
+      error={error}
+    >
       <Input label="Title of the song" value={title} setValue={setTitle} />
 
       <Input label="Artist" value={artist} setValue={setArtist} />

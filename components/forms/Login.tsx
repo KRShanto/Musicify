@@ -24,11 +24,12 @@ export default function Login() {
   }
 
   return (
-    <Form submitHandler={submitHandler} className="form-full">
-      <h2 className="heading">Login</h2>
-
-      {error && <p className="error">{error}</p>}
-
+    <Form
+      submitHandler={submitHandler}
+      className="form-full"
+      title="Login"
+      error={error}
+    >
       <Input
         type="email"
         label="Email"

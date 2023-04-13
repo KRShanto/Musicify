@@ -110,11 +110,12 @@ export default function CreatePlaylist() {
 
   if (loggedIn)
     return (
-      <Form submitHandler={submitHandler} className="form-full">
-        <h2 className="heading">Create Playlist</h2>
-
-        {error && <p className="error">{error}</p>}
-
+      <Form
+        submitHandler={submitHandler}
+        className="form-full"
+        title="Create Playlist"
+        error={error}
+      >
         <Input label="Title of Playlist" value={title} setValue={setTitle} />
 
         <div className="form-wrapper">

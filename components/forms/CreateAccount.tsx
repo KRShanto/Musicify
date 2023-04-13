@@ -42,7 +42,6 @@ export default function CreateAccount() {
         : DEFAULT_CHANNEL_IMAGE_NAME;
 
       await setDoc(channelRef, {
-        // id: userCredential.user.uid,
         userId: userCredential.user.uid,
         name,
         about: null,
@@ -63,19 +62,18 @@ export default function CreateAccount() {
 
         router.push(`/channel/${url}`);
       }
-
-      // console.log("New channel: ", newChannel);
     } catch (e: any) {
       setError(e.message);
     }
   }
 
   return (
-    <Form submitHandler={submitHandler} className="form-full">
-      <h2 className="heading">Create Account</h2>
-
-      {error && <p className="error">{error}</p>}
-
+    <Form
+      submitHandler={submitHandler}
+      className="form-full"
+      title="Create Account"
+      error={error}
+    >
       <Input label="Channel Name" value={name} setValue={setName} required />
 
       <File label="Channel Image" setValue={setImg} />
