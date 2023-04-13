@@ -13,3 +13,5 @@
 7. Meta tags
 
 8. Algolia search
+
+9. View count for songs

@@ -246,7 +246,6 @@ export default function Plyaylist() {
                 <td className="artist">{song.artist}</td>
 
                 <td className="date">
-                  {/* @ts-ignore */}
                   {moment(song.createdAt.toDate()).format("MMM DD, YYYY")}
                 </td>
 

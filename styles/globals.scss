@@ -36,6 +36,7 @@ body {
   width: 85%;
   height: 92vh;
   right: 0;
+  top: 8vh;
 }
 
 .preloader {
@@ -87,6 +88,7 @@ body {
 @import "create-page.scss";
 @import "playlist-page.scss";
 @import "audio-player.scss";
+@import "home.scss";
 
 @import "utility/input.scss";
 @import "utility/button.scss";
