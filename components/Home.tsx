@@ -37,8 +37,8 @@ export default function Home() {
       collection(db, "songs"),
       where("isPublic", "==", true),
       orderBy("__name__"),
-      startAt(String(Date.now() - 1000 * 60 * 60 * 24 * 7 * 4)), // last 4 weeks
-      limit(20)
+      startAt(String(Date.now() - 1000 * 60 * 60 * 24 * 7 * 4)) // last 4 weeks
+      // limit(20) // TODO
     );
     const querySnapshot = await getDocs(q);
     const musics = querySnapshot.docs.map((doc) => ({
@@ -116,12 +116,12 @@ export default function Home() {
     fetch20Musics();
   }, []);
 
-  // add an event listener to the window
-  // when the user scrolls to the bottom of the page, fetch 20 more musics
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [musics]);
+  // // add an event listener to the window
+  // // when the user scrolls to the bottom of the page, fetch 20 more musics
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [musics]);
 
   console.log(musics);
 
